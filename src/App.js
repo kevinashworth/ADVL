@@ -1,7 +1,6 @@
 import React from "react";
 import faker from "faker";
 import { makeStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -82,17 +81,19 @@ function App() {
               {kids[random(kids.length)]} is {adjective2}!
             </Typography>
             {adjective2 === "sad" ? (
-                <SentimentVeryDissatisfiedIcon
-                  fontSize="large"
-                  color="primary"
-                />
-              ) : null}
+              <SentimentVeryDissatisfiedIcon fontSize="large" color="primary" />
+            ) : null}
             <Typography variant="body1">And guess what else?</Typography>
             <Typography variant="h4">
               {kiddo} owns a {faker.animal.type()}!
             </Typography>
-            <Typography variant="body1">And this is what it looks like:</Typography>
-            <img src={faker.image.animals()} />
+            <Typography variant="body1">
+              And this is what it looks like:
+            </Typography>
+            <img
+              src={faker.image.animals()}
+              alt={`very accurate phone of ${kiddo}'s animal`}
+            />
             <Button
               variant="outlined"
               color="primary"
