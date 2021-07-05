@@ -5,12 +5,15 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
+import Grid from "@material-ui/core/Grid";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import Typography from "@material-ui/core/Typography";
 import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
 import SentimentVerySatisfiedIcon from "@material-ui/icons/SentimentVerySatisfied";
+
+import { kids, verbs, adjectives, adverbs, animals } from "./data";
 
 const unsplash = createApi({
   accessKey: "hmm",
@@ -23,100 +26,46 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 320,
+    width: "100%",
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
 }));
 
-const kids = ["Alia", "Daxton", "Verity", "Levi", "Kevin", "Jared", "Kristie"];
-
-const verbs = [
-  "exists",
-  "tickles",
-  "eats",
-  "runs",
-  "jumps",
-  "gives",
-  "hides",
-  "sleeps",
-  "loves",
-];
-
-const adjectives = [
-  "red",
-  "braggy",
-  "sad",
-  "orange",
-  "happy",
-  "oblong",
-  "hot",
-  "shy",
-  "frightening",
-  "blue",
-  "angry",
-  "funny",
-  "boring",
-  "silly",
-  "adorable",
-  "cool",
-  "cute",
-  "dorky",
-  "elegant",
-  "fancy",
-  "glamorous",
-  "gorgeous",
-  "handsome",
-  "brilliant",
-  "intelligent",
-  "lazy",
-  "magnificent",
-  "smart",
-  "sensible",
-  "asleep",
-];
-
-const adverbs = [
-  "quickly",
-  "speedily",
-  "funnily",
-  "hesitantly",
-  "smartly",
-  "well",
-];
-
-const animals = [
-  "grizzly bear",
-  "rabbit",
-  "cat",
-  "chicken",
-  "dolphin",
-  "gecko",
-  "salamander",
-  "housefly",
-  "cricket",
-];
-
 // random number between 0 and x
-function random(x) {
+function randomNumber(x) {
   return Math.floor(Math.random() * x);
+}
+
+function randomArrayEntry(arr) {
+  return arr[randomNumber(arr.length)];
+}
+
+function randomVariant() {
+  // const variants = ["h2", "h3", "h4,", "h5", "h6", "body1", "body2", "overline", "subtitle1"];
+  const variants = ["h2", "h3", "h4,", "h5", "h6", "h1"];
+  return randomArrayEntry(variants);
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function App() {
   const classes = useStyles();
-  const [kiddo, setKiddo] = useState(null);
+  const [kiddo, setKiddo] = useState("");
   const [adjective1, setAdjective1] = useState("");
   const [adjective2, setAdjective2] = useState("");
   const [pet, setPet] = useState("");
   const [petImageUrl, setPetImageUrl] = useState("");
 
   useEffect(() => {
-    const adject1 = adjectives[random(adjectives.length)];
-    setAdjective1(adject1.charAt(0).toUpperCase() + adject1.slice(1));
-    const adject2 = adjectives[random(adjectives.length)];
+    const adject1 = randomArrayEntry(adjectives);
+    setAdjective1(capitalize(adject1));
+    const adject2 = randomArrayEntry(adjectives);
     setAdjective2(adject2);
-    setPet(animals[random(animals.length)]);
+    setPet(randomArrayEntry(animals));
   }, [kiddo]);
 
   useEffect(() => {
@@ -134,7 +83,8 @@ function App() {
             // handle error here
             console.log("unsplash error occurred: ", result.errors[0]);
           } else if (result.type === "success") {
-            const imageUrl = result.response.results[random(10)].urls.small;
+            const imageUrl =
+              result.response.results[randomNumber(10)].urls.small;
             setPetImageUrl(imageUrl);
           }
         });
@@ -160,52 +110,10 @@ function App() {
   };
 
   return (
-    <Box m={1} p={1}>
-      <Container maxWidth="sm">
-        {kiddo ? (
+    <Container>
+      <Grid container spacing={9}>
+        <Grid item xs={12} sm={4} md={3}>
           <>
-            <Typography variant="h4">
-              {adjective1} {kiddo} {adverbs[random(adverbs.length)]}{" "}
-              {verbs[random(verbs.length)]}!
-            </Typography>
-
-            <Typography variant="body1">And guess what else?</Typography>
-
-            <Typography variant="h4" style={{ color: adjective2 }}>
-              {kids[random(kids.length)]} is {adjective2}!
-            </Typography>
-            {adjective2 === "sad" ? (
-              <SentimentVeryDissatisfiedIcon fontSize="large" color="primary" />
-            ) : null}
-            {adjective2 === "happy" ? (
-              <SentimentVerySatisfiedIcon fontSize="large" color="secondary" />
-            ) : null}
-            <Typography variant="body1">And guess what else?</Typography>
-            <Typography variant="h4">
-              {kiddo} owns a {pet}!
-            </Typography>
-            <Typography variant="body1">
-              And this is what it looks like:
-            </Typography>
-            <img
-              src={petImageUrl}
-              alt={`very accurate phone of ${kiddo}'s animal`}
-              width="100%"
-            />
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => setKiddo(null)}
-            >
-              Start Over
-            </Button>
-            <Button variant="outlined" color="secondary" onClick={getNextKid}>
-              Somebody Else
-            </Button>
-          </>
-        ) : (
-          <>
-            <Typography variant="h3">CHOOSE!</Typography>
             <FormControl className={classes.formControl}>
               <InputLabel id="demo-simple-select-label">
                 Which Person?
@@ -223,10 +131,72 @@ function App() {
                 ))}
               </Select>
             </FormControl>
+            {kiddo && (
+              <>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => setKiddo("")}
+                >
+                  Start Over
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={getNextKid}
+                >
+                  Somebody Else
+                </Button>
+              </>
+            )}
           </>
-        )}
-      </Container>
-    </Box>
+        </Grid>
+        <Grid item xs={12} sm={8} md={9}>
+          {kiddo ? (
+            <>
+              <Typography variant={randomVariant()} gutterBottom>
+                {adjective1} {kiddo} {adverbs[randomNumber(adverbs.length)]}{" "}
+                {verbs[randomNumber(verbs.length)]}.
+              </Typography>
+
+              <Typography variant="body2" gutterBottom>
+                And guess what else?
+              </Typography>
+
+              <Typography variant="h4" style={{ color: adjective2 }}>
+                {kids[randomNumber(kids.length)]} is {adjective2}.
+              </Typography>
+              {adjective2 === "sad" ? (
+                <SentimentVeryDissatisfiedIcon
+                  fontSize="large"
+                  color="primary"
+                />
+              ) : null}
+              {adjective2 === "happy" ? (
+                <SentimentVerySatisfiedIcon
+                  fontSize="large"
+                  color="secondary"
+                />
+              ) : null}
+              <Typography variant="body2" gutterBottom>
+                And guess what else?
+              </Typography>
+              <Typography variant="h4" gutterBottom>
+                {kiddo} owns a {pet}!
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                And this is what it looks like:
+              </Typography>
+              <img
+                src={petImageUrl}
+                alt={`photo of ${kiddo}'s ${pet}`}
+                width="100%"
+              />
+            </>
+          ) : null}
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 
