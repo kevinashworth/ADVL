@@ -1,8 +1,11 @@
 import React from "react";
+import faker from "faker";
 import { makeStyles } from "@material-ui/core/styles";
+import Avatar from "@material-ui/core/Avatar";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
-// import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
@@ -10,6 +13,10 @@ import Typography from "@material-ui/core/Typography";
 import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
 
 const useStyles = makeStyles((theme) => ({
+  avatar: {
+    height: 84,
+    width: 84,
+  },
   formControl: {
     margin: theme.spacing(1),
     minWidth: 320,
@@ -19,19 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const kids = [
-  "Alia",
-  "Daxton",
-  "Verity",
-  "Levi",
-  "Kevin",
-  "Jared",
-  "Kristie",
-  "Leo",
-  "Turquoise",
-  "Dotty",
-  "R-2",
-];
+const kids = ["Alia", "Daxton", "Verity", "Levi", "Kevin", "Jared", "Kristie"];
 
 const verbs = ["exists", "tickles", "eats", "runs", "jumps", "gives"];
 
@@ -72,49 +67,64 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Container maxWidth="md">
-        <FormControl className={classes.formControl}>
-          <InputLabel id="demo-simple-select-label">
-            Which Person and/or Animal?
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={kiddo}
-            onChange={handleChange}
-          >
-            {kids.map((kid) => (
-              <MenuItem key={kid} value={kid}>
-                {kid}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+    <Box m={1} p={1}>
+      <Container maxWidth="sm">
         {kiddo ? (
           <>
-            <Typography variant="h2">
+            <Typography variant="h4">
               {adjective1} {kiddo} {adverbs[random(adverbs.length)]}{" "}
               {verbs[random(verbs.length)]}!
             </Typography>
 
-            <Typography variant="h3">And guess what else?</Typography>
+            <Typography variant="body1">And guess what else?</Typography>
 
-            <Typography variant="h2" style={{ color: adjective2 }}>
+            <Typography variant="h4" style={{ color: adjective2 }}>
               {kids[random(kids.length)]} is {adjective2}!
-              {adjective2 === "sad" ? (
+            </Typography>
+            {adjective2 === "sad" ? (
                 <SentimentVeryDissatisfiedIcon
                   fontSize="large"
                   color="primary"
                 />
               ) : null}
+            <Typography variant="body1">And guess what else?</Typography>
+            <Typography variant="h4">
+              {kiddo} owns a {faker.animal.type()}!
             </Typography>
+            <Typography variant="body1">And this is what it looks like:</Typography>
+            <img src={faker.image.animals()} />
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setKiddo(null)}
+            >
+              Start Over
+            </Button>
           </>
         ) : (
-          "CHOOSE!"
+          <>
+            <Typography variant="h3">CHOOSE!</Typography>
+            <FormControl className={classes.formControl}>
+              <InputLabel id="demo-simple-select-label">
+                Which Person?
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={kiddo}
+                onChange={handleChange}
+              >
+                {kids.map((kid) => (
+                  <MenuItem key={kid} value={kid}>
+                    {kid}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </>
         )}
       </Container>
-    </div>
+    </Box>
   );
 }
 
