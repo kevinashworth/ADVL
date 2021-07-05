@@ -1,5 +1,5 @@
-import React from "react";
-import faker from "faker";
+import React, { useEffect, useState } from "react";
+import { createApi } from "unsplash-js";
 import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -10,6 +10,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import Typography from "@material-ui/core/Typography";
 import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
+import SentimentVerySatisfiedIcon from "@material-ui/icons/SentimentVerySatisfied";
+
+const unsplash = createApi({
+  accessKey: "hmm",
+});
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -27,7 +32,17 @@ const useStyles = makeStyles((theme) => ({
 
 const kids = ["Alia", "Daxton", "Verity", "Levi", "Kevin", "Jared", "Kristie"];
 
-const verbs = ["exists", "tickles", "eats", "runs", "jumps", "gives"];
+const verbs = [
+  "exists",
+  "tickles",
+  "eats",
+  "runs",
+  "jumps",
+  "gives",
+  "hides",
+  "sleeps",
+  "loves",
+];
 
 const adjectives = [
   "red",
@@ -39,9 +54,49 @@ const adjectives = [
   "hot",
   "shy",
   "frightening",
+  "blue",
+  "angry",
+  "funny",
+  "boring",
+  "silly",
+  "adorable",
+  "cool",
+  "cute",
+  "dorky",
+  "elegant",
+  "fancy",
+  "glamorous",
+  "gorgeous",
+  "handsome",
+  "brilliant",
+  "intelligent",
+  "lazy",
+  "magnificent",
+  "smart",
+  "sensible",
+  "asleep",
 ];
 
-const adverbs = ["quickly", "speedily", "funnily", "hesitantly"];
+const adverbs = [
+  "quickly",
+  "speedily",
+  "funnily",
+  "hesitantly",
+  "smartly",
+  "well",
+];
+
+const animals = [
+  "grizzly bear",
+  "rabbit",
+  "cat",
+  "chicken",
+  "dolphin",
+  "gecko",
+  "salamander",
+  "housefly",
+  "cricket",
+];
 
 // random number between 0 and x
 function random(x) {
@@ -50,19 +105,58 @@ function random(x) {
 
 function App() {
   const classes = useStyles();
-  const [kiddo, setKiddo] = React.useState(null);
-  const [adjective1, setAdjective1] = React.useState("");
-  const [adjective2, setAdjective2] = React.useState("");
+  const [kiddo, setKiddo] = useState(null);
+  const [adjective1, setAdjective1] = useState("");
+  const [adjective2, setAdjective2] = useState("");
+  const [pet, setPet] = useState("");
+  const [petImageUrl, setPetImageUrl] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     const adject1 = adjectives[random(adjectives.length)];
     setAdjective1(adject1.charAt(0).toUpperCase() + adject1.slice(1));
     const adject2 = adjectives[random(adjectives.length)];
     setAdjective2(adject2);
+    setPet(animals[random(animals.length)]);
   }, [kiddo]);
+
+  useEffect(() => {
+    const getImageUrlFromUnsplash = () => {
+      unsplash.search
+        .getPhotos({
+          query: pet,
+          page: 1,
+          perPage: 10,
+          color: adjective1,
+          orientation: "landscape",
+        })
+        .then((result) => {
+          if (result.errors) {
+            // handle error here
+            console.log("unsplash error occurred: ", result.errors[0]);
+          } else if (result.type === "success") {
+            const imageUrl = result.response.results[random(10)].urls.small;
+            setPetImageUrl(imageUrl);
+          }
+        });
+    };
+    getImageUrlFromUnsplash();
+  }, [adjective1, pet]);
 
   const handleChange = (event) => {
     setKiddo(event.target.value);
+  };
+
+  const getNextKid = () => {
+    const currentKid = kiddo;
+    const currentKidId = kids.findIndex((kid) => kid === currentKid);
+    let nextKidId = currentKidId + 1;
+    if (nextKidId > kids.length - 1) {
+      nextKidId = 0;
+    }
+    console.log({ currentKid });
+    console.log(nextKidId, kids[nextKidId]);
+    setKiddo(kids[nextKidId]);
+    // return kids[nextKidId];
   };
 
   return (
@@ -83,16 +177,20 @@ function App() {
             {adjective2 === "sad" ? (
               <SentimentVeryDissatisfiedIcon fontSize="large" color="primary" />
             ) : null}
+            {adjective2 === "happy" ? (
+              <SentimentVerySatisfiedIcon fontSize="large" color="secondary" />
+            ) : null}
             <Typography variant="body1">And guess what else?</Typography>
             <Typography variant="h4">
-              {kiddo} owns a {faker.animal.type()}!
+              {kiddo} owns a {pet}!
             </Typography>
             <Typography variant="body1">
               And this is what it looks like:
             </Typography>
             <img
-              src={faker.image.animals()}
+              src={petImageUrl}
               alt={`very accurate phone of ${kiddo}'s animal`}
+              width="100%"
             />
             <Button
               variant="outlined"
@@ -100,6 +198,9 @@ function App() {
               onClick={() => setKiddo(null)}
             >
               Start Over
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={getNextKid}>
+              Somebody Else
             </Button>
           </>
         ) : (
