@@ -13,15 +13,9 @@ export function randomArrayEntry(arr) {
 
 export function randomVariant() {
   const variants = [
-    "h2",
     "h3",
-    "h4,",
+    "h4",
     "h5",
-    "h6",
-    "body1",
-    "body2",
-    "overline",
-    "subtitle1",
   ];
   const randomIndex = randomNumber(variants.length);
   return variants[randomIndex];
