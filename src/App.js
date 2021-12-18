@@ -12,6 +12,7 @@ import Select from "@material-ui/core/Select";
 import Typography from "@material-ui/core/Typography";
 import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
 import SentimentVerySatisfiedIcon from "@material-ui/icons/SentimentVerySatisfied";
+import { randomArrayEntry, randomNumber, capitalize, randomVariant } from "./utils";
 
 import { kids, verbs, adjectives, adverbs, animals } from "./data";
 
@@ -32,25 +33,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
 }));
-
-// random number between 0 and x
-function randomNumber(x) {
-  return Math.floor(Math.random() * x);
-}
-
-function randomArrayEntry(arr) {
-  return arr[randomNumber(arr.length)];
-}
-
-function randomVariant() {
-  // const variants = ["h2", "h3", "h4,", "h5", "h6", "body1", "body2", "overline", "subtitle1"];
-  const variants = ["h2", "h3", "h4,", "h5", "h6", "h1"];
-  return randomArrayEntry(variants);
-}
-
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
 
 function App() {
   const classes = useStyles();
