@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createApi } from "unsplash-js";
 import { makeStyles } from "@material-ui/core/styles";
-import Box from "@material-ui/core/Box";
+// import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
@@ -16,8 +16,11 @@ import { randomArrayEntry, randomNumber, capitalize, randomVariant } from "./uti
 
 import { kids, verbs, adjectives, adverbs, animals } from "./data";
 
+console.log(process.env.REACT_APP_UNSPLASH_ACCESS_KEY);
+console.log(process.env.REACT_APP_UNSPLASH_SECRET_KEY);
+
 const unsplash = createApi({
-  accessKey: "hmm",
+  accessKey: process.env.REACT_APP_UNSPLASH_ACCESS_KEY,
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -37,8 +40,8 @@ const useStyles = makeStyles((theme) => ({
 function App() {
   const classes = useStyles();
   const [kiddo, setKiddo] = useState("");
-  const [adjective1, setAdjective1] = useState("");
-  const [adjective2, setAdjective2] = useState("");
+  const [adjective1, setAdjective1] = useState("red");
+  const [adjective2, setAdjective2] = useState("green");
   const [pet, setPet] = useState("");
   const [petImageUrl, setPetImageUrl] = useState("");
 
@@ -65,9 +68,13 @@ function App() {
             // handle error here
             console.log("unsplash error occurred: ", result.errors[0]);
           } else if (result.type === "success") {
-            const imageUrl =
-              result.response.results[randomNumber(10)].urls.small;
-            setPetImageUrl(imageUrl);
+            console.log("unsplash success: ", result.response);
+            const totalResults = result.response.total;
+            if (totalResults > 0) {
+              const imageUrl =
+                result.response.results[randomNumber(totalResults)].urls.small;
+              setPetImageUrl(imageUrl);
+            }
           }
         });
     };
@@ -141,11 +148,15 @@ function App() {
                 {verbs[randomNumber(verbs.length)]}.
               </Typography>
 
-              <Typography variant="body2" gutterBottom>
+              <Typography variant={randomVariant()} gutterBottom>
                 And guess what else?
               </Typography>
 
-              <Typography variant="h4" style={{ color: adjective2 }}>
+              <Typography
+                variant={randomVariant()}
+                style={{ color: adjective2 }}
+                gutterBottom
+              >
                 {kids[randomNumber(kids.length)]} is {adjective2}.
               </Typography>
               {adjective2 === "sad" ? (
@@ -160,20 +171,16 @@ function App() {
                   color="secondary"
                 />
               ) : null}
-              <Typography variant="body2" gutterBottom>
+              <Typography variant={randomVariant()} gutterBottom>
                 And guess what else?
               </Typography>
-              <Typography variant="h4" gutterBottom>
+              <Typography variant={randomVariant()} gutterBottom>
                 {kiddo} owns a {pet}!
               </Typography>
-              <Typography variant="body1" gutterBottom>
+              <Typography variant={randomVariant()} gutterBottom>
                 And this is what it looks like:
               </Typography>
-              <img
-                src={petImageUrl}
-                alt={`photo of ${kiddo}'s ${pet}`}
-                width="100%"
-              />
+              <img src={petImageUrl} alt={`${kiddo}'s ${pet}`} width="100%" />
             </>
           ) : null}
         </Grid>
